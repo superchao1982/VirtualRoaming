@@ -7,5 +7,14 @@ public class shareData : MonoBehaviour {
 
     public static List<Vector3> positions;
     public static List<Vector3> scales;
-	
+
+    public static List<float> topPos;
+    public static List<float> bottomPos;
+    public static List<float> leftPos;
+    public static List<float> rightPos;
+
+    public static float btPos;
+    public static float bbPos;
+    public static float blPos;
+    public static float brPos;
 }

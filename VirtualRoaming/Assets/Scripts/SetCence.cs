@@ -7,8 +7,11 @@ public class SetCence : MonoBehaviour {
     public GameObject prefab;
 	// Use this for initialization
 	void Start () {
-        if(shareData.basePosition!=null)
+        if (shareData.basePosition != Vector3.zero)
+        {
+            //Debug.Log("h");
             baseBox.GetComponent<Box>().setBox(shareData.baseScale);
+        }
         if (shareData.positions != null)
         {
             for (int i = 0; i < shareData.positions.Count; i++)

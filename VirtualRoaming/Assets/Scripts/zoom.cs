@@ -9,6 +9,7 @@ public class zoom : MonoBehaviour {
     public string parentName;
     [HideInInspector]
     public bool onDrag;
+    [HideInInspector]
     public bool overModel;
 
     private editModel parentModel;
@@ -53,9 +54,19 @@ public class zoom : MonoBehaviour {
                 int i = Int32.Parse(parentName);
                 Debug.Log("scale"+transform.parent.localScale);
                 shareData.scales[i] = transform.parent.localScale;
+
+                addPosData(i);
             }
         }
 	}
+    void addPosData(int id)
+    {
+        shareData.topPos[id] = Camera.main.WorldToScreenPoint(transform.parent.FindChild("topSide").position).y;
+        shareData.bottomPos[id] = Camera.main.WorldToScreenPoint(transform.parent.FindChild("bottomSide").position).y;
+
+        shareData.leftPos[id] = Camera.main.WorldToScreenPoint(transform.parent.FindChild("leftSide").position).x;
+        shareData.rightPos[id] = Camera.main.WorldToScreenPoint(transform.parent.FindChild("rightSide").position).x;
+    }
     void OnMouseDrag()
     {
         UIInEditModle.canMove = false;

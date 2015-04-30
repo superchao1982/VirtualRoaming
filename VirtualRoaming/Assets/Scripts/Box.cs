@@ -85,4 +85,8 @@ public class Box : MonoBehaviour {
             box[i].transform.localPosition = tem;
         }
     }
+    void OnCollisionEnter(Collision collisionInfo)
+    {
+        Debug.Log("碰撞 box:" + collisionInfo.gameObject.name);
+    }
 }

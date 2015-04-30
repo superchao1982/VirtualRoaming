@@ -13,8 +13,9 @@ public class CharacterCollisionDetection : MonoBehaviour
 	void Update () {
 	
 	}
-    void OnCollisionEnter(Collision collisionInfo)
+    void OnControllerColliderHit(ControllerColliderHit hit)
     {
-        Debug.Log("碰撞:" + collisionInfo.gameObject.name);
+        if(!hit.gameObject.name.Equals("bottom"))
+            Debug.Log("碰撞1:" + hit.gameObject.name);
     }
 }
