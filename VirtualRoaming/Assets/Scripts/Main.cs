@@ -64,7 +64,7 @@ public class Main : MonoBehaviour {
         if (GUI.Button(new Rect(10, 10, 150, 100), "reset"))//GUILayout.Button("打开手机相册"))
         {
             Reset();
-            NotifyCenter.Reset();
+            //NotifyCenter.Reset();
         }
         if (GUI.Button(new Rect(10, 150, 150, 100), "open Camera"))
         {

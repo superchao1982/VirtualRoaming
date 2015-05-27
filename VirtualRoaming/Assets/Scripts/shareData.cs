@@ -13,8 +13,20 @@ public class shareData : MonoBehaviour {
     public static List<float> leftPos;
     public static List<float> rightPos;
 
+    /// <summary>
+    /// base top
+    /// </summary>
     public static float btPos;
+    /// <summary>
+    /// base bottom
+    /// </summary>
     public static float bbPos;
+    /// <summary>
+    /// base left
+    /// </summary>
     public static float blPos;
+    /// <summary>
+    /// base right
+    /// </summary>
     public static float brPos;
 }

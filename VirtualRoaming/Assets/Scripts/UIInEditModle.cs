@@ -8,10 +8,14 @@ public class UIInEditModle : MonoBehaviour {
     public GameObject shareObject;
     public GameObject prefab;
     public Transform camera;
+    public DottedLineController dottedLineController;
+    public Camera mainCamera;
+    public float minOffsetOfModelPosition;
     public static SortedList xList;
     public static SortedList yList;
-
-    public int zoomSpeed;
+    public static UIInEditModle shareInstance;
+    public float zoomSpeed;
+    public float moveSpeed;
     public float offsetSize;
     public static bool canMove = true;
     private static int planesNum;
@@ -23,9 +27,14 @@ public class UIInEditModle : MonoBehaviour {
 
     private static float centerX =0;
     private static float centerY=0;
+
+    private Vector2 oldPos1 = Vector2.zero;
+    private Vector2 oldPos2 = Vector2.zero;
     //public GameObject plane;
 	// Use this for initialization
 	void Start () {
+        shareInstance = this;
+        addBasePosData();
         if (colors == null)
         {
             colors = new Color[numsColor]{
@@ -42,10 +51,20 @@ public class UIInEditModle : MonoBehaviour {
         planesNum = 0;
         xList = new SortedList();
         yList = new SortedList();
+        if (shareData.topPos == null)
+            shareData.topPos = new List<float>();
+        if (shareData.bottomPos == null)
+            shareData.bottomPos = new List<float>();
+        if (shareData.leftPos == null)
+            shareData.leftPos = new List<float>();
+        if (shareData.rightPos == null)
+            shareData.rightPos = new List<float>();
 	}
 	
-	// Update is called once per frame
-	void Update () {
+	void Update ()
+    {
+#if UNITY_EDITOR
+        //Debug.Log("UIInEditModle update");
         if (Input.GetKey(KeyCode.LeftShift))
         {
             zoom(true);
@@ -58,58 +77,150 @@ public class UIInEditModle : MonoBehaviour {
         {
             if(canMove)
                 move();
-            
         }
-	}
-    
+#else
+        if (Input.touchCount < 1)
+        {
+            oldPos1 = Vector3.zero;
+            oldPos2 = Vector3.zero;
+        }
+        if (Input.touchCount == 1)
+        {
+            if (Input.GetTouch(0).phase == TouchPhase.Moved)
+            {
+                if (canMove)
+                    move();
+            }
+        }
+        if (Input.touchCount > 1)
+        {
+            if (Input.GetTouch(0).phase == TouchPhase.Moved || Input.GetTouch(1).phase == TouchPhase.Moved)
+            {
+                Vector2 tempPos1 = Input.GetTouch(0).position;
+                Vector2 tempPos2 = Input.GetTouch(1).position;
+                float len = isEnlarge(oldPos1, oldPos2, tempPos1, tempPos2);
+                zoom(len);
+                oldPos1 = tempPos1;
+                oldPos2 = tempPos2;
+            }
+        }
+#endif
+
+    }
+    #region sharedata 存储等
+    void addBasePosData()
+    {
+        shareData.btPos = mainCamera.WorldToScreenPoint(basePlane.FindChild("topSide").position).y;
+        shareData.bbPos = mainCamera.WorldToScreenPoint(basePlane.FindChild("bottomSide").position).y;
+
+        shareData.blPos = mainCamera.WorldToScreenPoint(basePlane.FindChild("leftSide").position).x;
+        shareData.brPos = mainCamera.WorldToScreenPoint(basePlane.FindChild("rightSide").position).x;
+    }
+    void addPosData(int id)
+    {
+
+        if (shareData.topPos.Count > id)
+        {
+            shareData.topPos[id] = mainCamera.WorldToScreenPoint(parentPlanes.FindChild(id.ToString()).FindChild("topSide").position).y;
+            shareData.bottomPos[id] = mainCamera.WorldToScreenPoint(parentPlanes.FindChild(id.ToString()).FindChild("bottomSide").position).y;
+
+            shareData.leftPos[id] = mainCamera.WorldToScreenPoint(parentPlanes.FindChild(id.ToString()).FindChild("leftSide").position).x;
+            shareData.rightPos[id] = mainCamera.WorldToScreenPoint(parentPlanes.FindChild(id.ToString()).FindChild("rightSide").position).x;
+        }
+        else
+        {
+            shareData.topPos.Add(mainCamera.WorldToScreenPoint(parentPlanes.FindChild(id.ToString()).FindChild("topSide").position).y);
+            shareData.bottomPos.Add(mainCamera.WorldToScreenPoint(parentPlanes.FindChild(id.ToString()).FindChild("bottomSide").position).y);
+            shareData.leftPos.Add(mainCamera.WorldToScreenPoint(parentPlanes.FindChild(id.ToString()).FindChild("leftSide").position).x);
+            shareData.rightPos.Add(mainCamera.WorldToScreenPoint(parentPlanes.FindChild(id.ToString()).FindChild("rightSide").position).x);
+        }
+    }
+    void savePosData()
+    {
+        int id = 0;
+        while (shareData.topPos.Count > id)
+        {
+            //Debug.Log(id);
+            addPosData(id);
+            id++;
+        }
+    }
+    #endregion
+
+    #region 摄像机移动缩放
     void move()
     {
-        //Debug.Log("drag");
+        
+        //Vector3 cPos = camera.transform.position;
+#if UNITY_EDITOR
         float inputOffsetX = Input.GetAxis("Mouse X");
         float inputOffsetY = Input.GetAxis("Mouse Y");
-        Vector3 cPos = camera.transform.position;
-        Vector3 offset = new Vector3(inputOffsetX, inputOffsetY, 0);
-        camera.transform.position = cPos - offset;
+        Vector3 offset = new Vector3(inputOffsetX, inputOffsetY, 0) * moveSpeed;
+#else
+        Vector3 offset = Input.GetTouch(0).deltaPosition*(moveSpeed /10);//new Vector3(inputOffsetX, inputOffsetY, 0);
+        
+#endif
+        camera.position -= offset;
+        addBasePosData();
+        savePosData();
+    }
+    float isEnlarge(Vector2 opos1, Vector2 opos2, Vector2 npos1, Vector2 npos2)
+    {
+        if (opos1 == Vector2.zero)
+            return 0;
+        float length1 = getLenth(opos1, opos2);
+        float length2 = getLenth(npos1, npos2);
+        return length2 - length1;
+        //if (length1 < length2)
+        //    return 1;
+        //else if (length1 > length2)
+        //    return -1;
+        //else
+        //    return 0;
+    }
+    float getLenth(Vector2 v1, Vector2 v2)
+    {
+        return Mathf.Sqrt((v1.x - v2.x) * (v1.x - v2.x) + (v1.y - v2.y) * (v1.y - v2.y));
     }
     void zoom(bool up)
     {
-        Vector3 cPos = camera.transform.position;
+        //Debug.Log("zoom");
+//#if UNITY_EDITOR
         Vector3 offset = new Vector3(0, 0, zoomSpeed);
-        if(up)
-            camera.transform.position = cPos + offset;
+//#else
+        //Vector2 temp1 = Input.GetTouch(0).deltaPosition*(zoomSpeed /10);
+        //Vector2 temp2 = Input.GetTouch(1).deltaPosition*(zoomSpeed /10);
+        //Vector3 offset = temp1+temp2;
+//#endif
+        if (up)
+            camera.position += offset;
         else
-            camera.transform.position = cPos - offset;
+            camera.position -= offset;
+
+        addBasePosData();
+        savePosData();
     }
-    void OnGUI()
+    void zoom(float len)
     {
-
-        if (GUI.Button(new Rect(10, 10, 50, 50), "添加"))
-        {
-            createPlane(planesNum.ToString(), getColor(planesNum), getLocalPos());
-            
-            planesNum++;
-            
-        }
-        if (GUI.Button(new Rect(10, 70, 100, 50), "生成"))
-        {
-            //shareData.position = new Vector3[1];
-            //shareData.scale = new Vector3[1];
-            //shareData.position[0] = basePlane.position;
-            //shareData.scale[0] = basePlane.localScale;
-            shareData.basePosition = formatVector(basePlane.transform.position);
-            shareData.baseScale = formatVector(basePlane.transform.localScale);
-            
-
-            //DontDestroyOnLoad(shareObject);
-            Application.LoadLevel("cence1");
-        }
-        if (GUI.Button(new Rect(10, 250, 150, 100), "debug"))
-        {
-            //D.Log(shareData.positions);
-            //D.Log(shareData.scales);
-            adjust(0);
-        }
+        Vector3 offset = new Vector3(0, 0, len * zoomSpeed / 100);
+        camera.position += offset;
     }
+    #endregion
+
+    #region button方法
+    public void addPlane()
+    {
+        createPlane(planesNum.ToString(), getColor(planesNum), getLocalPos());
+        addPosData(planesNum);
+        planesNum++;
+    }
+    public void createHouse()
+    {
+        shareData.basePosition = formatVector(basePlane.transform.position);
+        shareData.baseScale = formatVector(basePlane.transform.localScale);
+        Application.LoadLevel("cence1");
+    }
+    #endregion
 
     #region 调整场景方法
     void adjust(int num) {
@@ -365,7 +476,7 @@ public class UIInEditModle : MonoBehaviour {
         moffset *= 5;
         result.x += moffset.x;
         result.y += moffset.y;
-        Debug.Log("center: "+center+" offset: "+offset+" moffset: "+moffset+" result: "+result);
+        //Debug.Log("center: "+center+" offset: "+offset+" moffset: "+moffset+" result: "+result);
         return result;
     }
     void setCenter()

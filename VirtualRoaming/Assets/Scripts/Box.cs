@@ -89,4 +89,46 @@ public class Box : MonoBehaviour {
     {
         Debug.Log("碰撞 box:" + collisionInfo.gameObject.name);
     }
+    public void setColliderActive(bool active)
+    {
+        foreach (GameObject side in box)
+        {
+            side.transform.GetComponent<MeshCollider>().enabled = active;
+        }
+    }
+
+    public void setTexture(Texture t, string side) {
+        Debug.LogWarning("-=-=-=-=-=-=-=-set Texture :" + t);
+        GameObject go = getGameObjectByName(side);
+        if (go != null)
+            go.transform.GetComponent<MeshRenderer>().materials[0].mainTexture = t;
+    }
+    public void setBoxByAspect(int x, int y)
+    {
+        foreach (GameObject go in box)
+        {
+            float width = go.transform.localScale.x;
+            float oldHeight = go.transform.localScale.z;
+            float heigth = (float)y / x * width;
+            Vector3 scale = new Vector3(width, 1.0f, heigth);
+            go.transform.localScale = scale;
+            Vector3 temV = go.transform.localPosition;
+            temV.y -= 5 * (oldHeight - heigth);
+            go.transform.localPosition = temV;
+        }
+    }
+    private GameObject getGameObjectByName(string name)
+    {
+        if (name.Equals("left"))
+            return left;
+        if (name.Equals("front"))
+            return front;
+        if (name.Equals("back"))
+            return back;
+        if (name.Equals("right"))
+            return right;
+        if (name.Equals("bottom"))
+            return bottom;
+        return null;
+    }
 }

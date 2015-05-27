@@ -39,10 +39,10 @@
 	<Reference Include="System.Core" />
 	<Reference Include="System.Xml.Linq" />
 	<Reference Include="UnityEngine">
-	  <HintPath>D:/Unity4.3.4/Editor/Data/Managed/UnityEngine.dll</HintPath>
+	  <HintPath>E:/Unity3D/Editor/Data/Managed/UnityEngine.dll</HintPath>
 	</Reference>
 	<Reference Include="UnityEditor">
-	  <HintPath>D:/Unity4.3.4/Editor/Data/Managed/UnityEditor.dll</HintPath>
+	  <HintPath>E:/Unity3D/Editor/Data/Managed/UnityEditor.dll</HintPath>
 	</Reference>
   </ItemGroup>
   <ItemGroup>
@@ -185,7 +185,11 @@
      <Compile Include="Assets\Scripts\CharacterMove.cs" />
      <Compile Include="Assets\Scripts\CubeScript.cs" />
      <Compile Include="Assets\Scripts\D.cs" />
+     <Compile Include="Assets\Scripts\DottedLineController.cs" />
+     <Compile Include="Assets\Scripts\EditMode.cs" />
+     <Compile Include="Assets\Scripts\Joystick.cs" />
      <Compile Include="Assets\Scripts\Main.cs" />
+     <Compile Include="Assets\Scripts\MoveXu.cs" />
      <Compile Include="Assets\Scripts\NotifyCenter.cs" />
      <Compile Include="Assets\Scripts\SetCence.cs" />
      <Compile Include="Assets\Scripts\UIInEditModle.cs" />

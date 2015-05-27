@@ -1,7 +1,7 @@
-cd "E:\mywork\a\VirtualRoaming\bin\classes"
+cd "E:\project\VirtualRoaming\InAndroid\VirtualRoaming\bin\classes"
 e:
 jar -cvf c.jar *
-copy c.jar "E:/unity 4.3.4 project/VirtualRoaming/Assets/Plugins/Android/bin"
+copy c.jar "E:\project\VirtualRoaming\VirtualRoaming\Assets\Plugins\Android\bin"
 cd ../..
-copy AndroidManifest.xml "E:/unity 4.3.4 project/VirtualRoaming/Assets/Plugins/Android"
+copy AndroidManifest.xml "E:\project\VirtualRoaming\VirtualRoaming\Assets\Plugins\Android"
 pause

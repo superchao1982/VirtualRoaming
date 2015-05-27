@@ -7,7 +7,7 @@ public class SetCence : MonoBehaviour {
     public GameObject prefab;
 	// Use this for initialization
 	void Start () {
-        if (shareData.basePosition != Vector3.zero)
+        if (shareData.baseScale != Vector3.zero)
         {
             //Debug.Log("h");
             baseBox.GetComponent<Box>().setBox(shareData.baseScale);

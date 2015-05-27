@@ -10,21 +10,34 @@ public class NotifyCenter {
             return;
 
         // find the plugin instance
-        using (var pluginClass = new AndroidJavaClass("com.xfy.virtualroaming.TestActivity"))
+        using (var pluginClass = new AndroidJavaClass("com.xfy.virtualroaming.MUnityActivity"))
             _plugin = pluginClass.GetStatic<AndroidJavaObject>("mInstance");
     }
 
-    public static void Reset()
-    {
+    //public static void Reset()
+    //{
 
-        if (Application.platform != RuntimePlatform.Android)
-            return;
-        _plugin.Call("TakePhoto", "Reset");
-    }
+    //    if (Application.platform != RuntimePlatform.Android)
+    //        return;
+    //    _plugin.Call("TakePhoto", "Reset");
+    //}
     public static void openCamera()
     {
         if (Application.platform != RuntimePlatform.Android)
             return;
-        _plugin.Call("TakePhoto", "takePhoto");
+        _plugin.Call("getPhoto", "takePhoto");
+    }
+    public static void openCamera(string name)
+    {
+        Debug.LogWarning("xfy======== model name when open camera:" + name);
+        if (Application.platform != RuntimePlatform.Android)
+            return;
+        _plugin.Call("getPhoto", "takePhoto",name);
+    }
+    public static void openGallery(string name)
+    {
+        if (Application.platform != RuntimePlatform.Android)
+            return;
+        _plugin.Call("getPhoto", "pickPhoto", name);
     }
 }

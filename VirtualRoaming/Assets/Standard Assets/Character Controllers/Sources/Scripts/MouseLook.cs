@@ -34,11 +34,14 @@ public class MouseLook : MonoBehaviour {
 	{
 		if (axes == RotationAxes.MouseXAndY)
 		{
+//#if UNITY_EDITOR
 			float rotationX = transform.localEulerAngles.y + Input.GetAxis("Mouse X") * sensitivityX;
 			
 			rotationY += Input.GetAxis("Mouse Y") * sensitivityY;
 			rotationY = Mathf.Clamp (rotationY, minimumY, maximumY);
-			
+//#else
+//            float rotationX = Input.GetTouch(0)
+//#endif
 			transform.localEulerAngles = new Vector3(-rotationY, rotationX, 0);
 		}
 		else if (axes == RotationAxes.MouseX)
