@@ -30,7 +30,7 @@ public class EditMode : MonoBehaviour {
     public static bool isTouchJoy = false;
     public Camera UICamera;
 
-    private Vector3 lastPlayerPos;
+    private static Vector3 lastPlayerPos;
     private int aspectX;
     private int aspectY;
     private const string SAVEMODE = "save";
@@ -42,7 +42,13 @@ public class EditMode : MonoBehaviour {
     public bool isTest;
     private string testText = "test";
     public Texture2D testTexture;
+    public Transform testTransform;
+    public Texture2D targetTexture;
+    public string name;
+    public string side;
+    public static bool haseTexture;
 	void Start () {
+        shareInstance = this;
         //isInEditMode = false;
 #if !UNITY_EDITOR
         //moveSpeed = 0.1f;
@@ -61,6 +67,12 @@ public class EditMode : MonoBehaviour {
         //{
         //    zoom(false);
         //}
+        if (haseTexture)
+        {
+            //Debug.LogWarning("----------xfy----------has texture");
+            setTexture(targetTexture, name, side);
+            haseTexture = false;
+        }
         if (isInEditMode)
         {
 #if UNITY_EDITOR
@@ -123,7 +135,7 @@ public class EditMode : MonoBehaviour {
             RaycastHit uiHit;
             if (Physics.Raycast(uiRay, out uiHit))
             {
-                Debug.Log(uiHit.transform.name);
+                //Debug.Log(uiHit.transform.name);
                 return;
             }
 
@@ -134,6 +146,7 @@ public class EditMode : MonoBehaviour {
             {
                 //testText = hit.transform.name;
                 //Debug.Log(testText);
+                //Debug.LogWarning("**********"+hit.transform.name+"++++++++++++");
                 if (isTouchJoy)
                     return;
                 else
@@ -160,6 +173,7 @@ public class EditMode : MonoBehaviour {
             RaycastHit uiHit;
             if (Physics.Raycast(uiRay, out uiHit))
             {
+                testTransform = uiHit.transform;
                 Debug.Log(uiHit.transform.name);
                 return;
             }
@@ -207,11 +221,11 @@ public class EditMode : MonoBehaviour {
 
         if (x != 0)
         {
-            mainCamera.transform.Rotate(Vector3.forward * x * zoomSpeed * Time.deltaTime, Space.Self);
+            mainCamera.transform.Rotate(Vector3.up * x * zoomSpeed * Time.deltaTime, Space.Self);
         }
         if (y != 0)
         {
-            mainCamera.transform.Rotate(Vector3.right * y * zoomSpeed * Time.deltaTime, Space.Self);
+            mainCamera.transform.Rotate(Vector3.left * y * zoomSpeed * Time.deltaTime, Space.Self);
         }
     }
     void move(direction d)
@@ -239,6 +253,7 @@ public class EditMode : MonoBehaviour {
     }*/
     #endregion
 
+    #region 改变模式方法
     private void inEditMode(){
         intoEditMode(true);
         isInEditMode = true;
@@ -248,28 +263,39 @@ public class EditMode : MonoBehaviour {
     }
     private void inSaveMode()
     {
+        //Debug.LogWarning("*******xfy****** last player position:" + lastPlayerPos);
+        if (lastPlayerPos.y < -6)
+            lastPlayerPos.y = -6;
+        firstPersonController.transform.position = lastPlayerPos;
         intoEditMode(false);
         isInEditMode = false;
-        firstPersonController.transform.position = lastPlayerPos;
+        
     }
     private void intoEditMode(bool active)
     {
         firstPersonController.SetActive(!active);
         mainCamera.SetActive(active);
+        //Debug.LogWarning("******xfy***** first persion controller:" + firstPersonController.activeInHierarchy + " camera:" + mainCamera.activeInHierarchy);
         if (!active)
         {
+            modeButtonLabel.text = EDITMODE;
             edit.SetActive(false);
+        }
+        else
+        {
+            modeButtonLabel.text = SAVEMODE;
         }
         joy.SetActive(active);
     }
+    #endregion
 
     #region 设置贴图 的方法
     public void setTexture(Texture t, string name, string side)
     {
-        Debug.LogWarning("=============set=========");
+        //Debug.LogWarning("=============set=========");
         if (name.Equals("base"))
         {
-            Debug.LogWarning("=============set base=========");
+            //Debug.LogWarning("=============set base=========");
             baseBox.transform.GetComponent<Box>().setTexture(t, side);
         }
         else
@@ -282,16 +308,16 @@ public class EditMode : MonoBehaviour {
     public void setPictureSize(int width, int height)
     {
         float crown = (float)width / height;
-        Debug.LogWarning("======set======== crown:" + crown);
+        //Debug.LogWarning("======set======== crown:" + crown);
         setAspect(crown);
-        Debug.LogWarning("======set======== aspectX:" + aspectX);
+        //Debug.LogWarning("======set======== aspectX:" + aspectX);
         baseBox.transform.GetComponent<Box>().setBoxByAspect(aspectX,aspectY);
         int count = parent.transform.childCount;
-        Debug.LogWarning("======set======== count:" + count);
+        //Debug.LogWarning("======set======== count:" + count);
         for (int i = 0; i < count; i++)
         {
             parent.transform.GetChild(i).transform.GetComponent<Box>().setBoxByAspect(aspectX, aspectY);
-            Debug.LogWarning(i);
+            //Debug.LogWarning(i);
         }
     }
     private void setAspect(float crown)
@@ -356,6 +382,10 @@ public class EditMode : MonoBehaviour {
             if (GUI.Button(new Rect(10, 300, 100, 50), "set"))
             {
                 baseBox.transform.GetComponent<Box>().setTexture(testTexture, "front");
+            }
+            if (GUI.Button(new Rect(10, 400, 100, 50), "rotate"))
+            {
+                mainCamera.transform.Rotate(Vector3.up * 1 * zoomSpeed * Time.deltaTime, Space.Self);
             }
         }
     }
