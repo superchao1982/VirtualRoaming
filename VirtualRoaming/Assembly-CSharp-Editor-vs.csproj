@@ -183,6 +183,9 @@
  <Reference Include="Assembly-UnityScript">
  <HintPath>Library\ScriptAssemblies\Assembly-UnityScript.dll</HintPath>
  </Reference>
+ <Reference Include="System.Drawing">
+ <HintPath>Assets\System.Drawing.dll</HintPath>
+ </Reference>
  <Reference Include="UnityEditor.Graphs">
  <HintPath>E:\Unity3D\Editor\Data\Managed\UnityEditor.Graphs.dll</HintPath>
  </Reference>
@@ -200,9 +203,6 @@
  </Reference>
  <Reference Include="UnityEditor.Android.Extensions">
  <HintPath>E:\Unity3D\Editor\Data\PlaybackEngines\AndroidPlayer\EditorExtensions\UnityEditor.Android.Extensions.dll</HintPath>
- </Reference>
- <Reference Include="System.Drawing">
- <HintPath>Assets\System.Drawing.dll</HintPath>
  </Reference>
   </ItemGroup>
   <ItemGroup>

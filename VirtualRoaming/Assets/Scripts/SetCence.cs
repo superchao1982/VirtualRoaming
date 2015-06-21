@@ -5,12 +5,16 @@ public class SetCence : MonoBehaviour {
     public GameObject baseBox;
     public Transform parent;
     public GameObject prefab;
+    public GameObject fpc;
 	// Use this for initialization
 	void Start () {
         if (shareData.baseScale != Vector3.zero)
         {
             //Debug.Log("h");
             baseBox.GetComponent<Box>().setBox(shareData.baseScale);
+            Vector3 p = new Vector3(shareData.basePosition.x, 0, shareData.basePosition.y);
+            baseBox.transform.position = p;
+            fpc.transform.position = p;
         }
         if (shareData.positions != null)
         {

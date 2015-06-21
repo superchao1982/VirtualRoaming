@@ -1,5 +1,5 @@
 cslines=0
-for file in ./*.cs
+for file in ./VirtualRoaming/Assets/Scripts/*.cs
 do
 	
 	temp=`cat ${file} |wc -l`
@@ -9,7 +9,7 @@ done
 echo "all cs lines: ${cslines}"
 
 javalines=0
-for file in ./*.java
+for file in ./InAndroid/VirtualRoaming/src/com/xfy/virtualroaming/*.java
 do
 	temp=`cat ${file} |wc -l`
 	echo "${file} lines: ${temp}"

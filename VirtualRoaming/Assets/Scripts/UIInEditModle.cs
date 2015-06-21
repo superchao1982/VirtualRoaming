@@ -216,7 +216,7 @@ public class UIInEditModle : MonoBehaviour {
     }
     public void createHouse()
     {
-        shareData.basePosition = formatVector(basePlane.transform.position);
+        shareData.basePosition = basePlane.transform.position;
         shareData.baseScale = formatVector(basePlane.transform.localScale);
         Application.LoadLevel("cence1");
     }

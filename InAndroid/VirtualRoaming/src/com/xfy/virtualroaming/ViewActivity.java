@@ -12,12 +12,15 @@ import com.unity3d.player.UnityPlayer;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.BitmapFactory.Options;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.provider.MediaStore.Images.Media;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.ImageView;
@@ -48,10 +51,10 @@ public class ViewActivity extends Activity {
 //    static int fileNameNum = 0;
     private final static String DATA_URL = "/data/data/";
     private final static String tag = "xfy";
-    private int aspectX = 9;
-	private int aspectY = 16;
-	private int outputX = 450;
-	private int outputY = 800;	//800
+    private int aspectX = 16;
+	private int aspectY = 9;
+	private int outputX = 800;
+	private int outputY = 450;	//800
 	private Uri imageUri;
 	private String modelName;
 	private String path = "/mnt/sdcard/Android/data/com.xfy.virtualroaming/files";
@@ -63,7 +66,7 @@ public class ViewActivity extends Activity {
 //		Log.i(tag, "on create");
 		super.onCreate(savedInstanceState);
 		
-//		setContentView(R.layout.main);
+		setContentView(R.layout.main);
 		sp = this.getSharedPreferences(getPackageName(), 0);
 		
 		imageUri = Uri.parse("file:///sdcard/tempBitMap.jpg");
@@ -131,7 +134,7 @@ public class ViewActivity extends Activity {
         // 读取相册缩放图片
         if (requestCode == PHOTOZOOM) {
 //        	Log.i("xfy","pick photo done! uri: "+data.getData());
-        	setImageOutputSize(data.getData());
+        	setImageOutput(data.getData());
             startPhotoZoom(data.getData());
         }
         // 处理结果
@@ -204,12 +207,36 @@ public class ViewActivity extends Activity {
 //    	Log.i(tag, "crown: "+aspectX+":"+aspectY);
     	//return result;
     }
+    private void setImageOutput(Uri uri){
+    	String[] column = { Media.DATA};
+    	Cursor cursor = getContentResolver().query(uri, column, null, null, null);
+    	cursor.moveToFirst();
+    	int index = cursor.getColumnIndex(column[0]);
+    	String ppath = cursor.getString(index);
+    	Options op = new Options();
+    	op.inJustDecodeBounds =true;
+    	Bitmap bmp = BitmapFactory.decodeFile(ppath);
+    	Log.i(tag,"xuan tu bitmap:"+bmp+" uri:"+uri);
+    	if(bmp!=null){
+//	    	outputX = op.outWidth;
+//	    	outputY = op.outHeight;
+    		outputX = bmp.getWidth();
+    		outputY= bmp.getHeight();
+//	    	float crown = (float)outputX/outputY;
+//	    	setAspect(crown);
+    		aspectX = outputX;
+    		aspectY = outputY;
+    	}
+    	else
+    		Log.i(tag, "bitmap is null,path: "+ppath);
+    	cursor.close();
+    }
     private void setImageOutputSize(Uri uri){
     	//Log.i("xfy","uri: "+uri);
     	//Log.i("xfy", "uri path: "+uri.getPath());
     	Bitmap p = BitmapFactory.decodeFile(uri.getPath());
     	//try{getContentResolver().openInputStream(uri);}catch(FileNotFoundException e){e.printStackTrace();}
-    	//Log.i(tag, "bitmap: "+p);
+    	Log.i(tag, "uri:"+uri+" path:"+uri.getPath());
     	if(p!=null){
     		outputX = p.getWidth();
     		outputY = p.getHeight();

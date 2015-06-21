@@ -55,6 +55,7 @@ public class EditMode : MonoBehaviour {
         //zoomSpeed = 0.1f;
         //left = joy.transform.FindChild("LeftJoystick").GetComponent<Joystick>();
         //right = joy.transform.FindChild("RightJoystick").GetComponent<Joystick>();
+        mainCamera.transform.GetComponent<MouseLook>().enabled = false;
 #endif
     }
 	

@@ -36,6 +36,9 @@ public class editModel : MonoBehaviour {
     private static bool canDisappearDottedLine = true;
 	// Use this for initialization
 	void Start () {
+#if UNITY_EDITOR
+        speed = 40;
+#endif
         minOffset = UIInEditModle.shareInstance.minOffsetOfModelPosition;
         modelName = gameObject.name;
         posChange = false;
